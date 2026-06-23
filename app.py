@@ -165,7 +165,7 @@ HTML = '''
 
     <div class="endpoint">
         <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?text={запрос}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">Любой текстовый запрос (ФИО, название компании) — Ofdata + DepSearch</div>
+        <div class="endpoint-desc">Любой текстовый запрос (ФИО, название компании) — Адрес + ИНН/СНИЛС</div>
         <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?text=<span class="str">Иванов Иван</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
