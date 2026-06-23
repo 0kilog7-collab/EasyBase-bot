@@ -63,7 +63,7 @@ HTML = '''
         <h2>Об API</h2>
         <p><strong>Easy API</strong> — универсальный OSINT-шлюз, объединяющий несколько источников данных в одном запросе.</p>
         <p>Все запросы проходят через единый эндпоинт <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">/search</code> с параметром <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">api_key</code>.</p>
-        <p>Поддерживаемые типы: номер телефона, email, пароль, ИНН, VK, TikTok, СНИЛС, IP, адрес, автомобиль, никнейм, текст.</p>
+        <p>Поддерживаемые типы: номер телефона, email, пароль, ИНН, VK, IP, ФИО, текст.</p>
         <p style="margin-top:16px;color:#64748b;font-size:14px;">Для доступа требуется API-ключ. Получить можно у владельца.</p>
         <button class="modal-close" onclick="closeModal('info')">Закрыть</button>
     </div>
@@ -75,7 +75,7 @@ HTML = '''
         <div class="stat"><span class="stat-label">Записей в базе</span><span class="stat-value">> 40 000 000 000</span></div>
         <div class="stat"><span class="stat-label">Источников данных</span><span class="stat-value">6</span></div>
         <div class="stat"><span class="stat-label">Общий объём</span><span class="stat-value">~500 ТБ</span></div>
-        <div class="stat"><span class="stat-label">Типов запросов</span><span class="stat-value">12</span></div>
+        <div class="stat"><span class="stat-label">Типов запросов</span><span class="stat-value">8</span></div>
         <div class="stat"><span class="stat-label">Доступность</span><span class="stat-value" style="color:#22c55e;">24/7</span></div>
         <button class="modal-close" onclick="closeModal('stats')">Закрыть</button>
     </div>
@@ -99,73 +99,49 @@ HTML = '''
 
     <div class="endpoint">
         <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?phone={номер}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">Номер телефона — автоматически очищается, запрос в DepSearch</div>
+        <div class="endpoint-desc">phone — Номер телефона</div>
         <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?phone=<span class="str">79277231370</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
         <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?email={почта}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">Email — запрос в DepSearch + Snusbase</div>
+        <div class="endpoint-desc">email — Электронная почта</div>
         <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?email=<span class="str">user@gmail.com</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
         <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?pass={пароль}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">Пароль — запрос в DepSearch + Snusbase (тип password)</div>
+        <div class="endpoint-desc">pass — Пароль</div>
         <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?pass=<span class="str">qwerty123</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
         <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?inn={инн}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">ИНН — 10 цифр (юрлица/банки через Ofdata); 12 цифр (физлица/ИП через Ofdata); также DepSearch</div>
+        <div class="endpoint-desc">inn — ИНН (10 цифр — Юрлица/Банки; 12 цифр — Физлица/ИП)</div>
         <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?inn=<span class="str">7707083893</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?vk={id/ссылка}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">VK — ID или ссылка, автоматически приводит к формату vkid</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?vk=<span class="str">1</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
-    </div>
-
-    <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?tiktok={ник/ссылка}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">TikTok — никнейм или ссылка, автоматически приводит к формату tt:</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?tiktok=<span class="str">tt:username</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
-    </div>
-
-    <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?snils={снилс}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">СНИЛС — приводит к формату snils</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?snils=<span class="str">12345678901</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?vkid={id/ссылка}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">vkid — Ссылка или ID ВКонтакте</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?vkid=<span class="str">1</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
         <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?ip={ip}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">IP-адрес — приводит к формату ip:</div>
+        <div class="endpoint-desc">ip — IP-адрес</div>
         <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?ip=<span class="str">8.8.8.8</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?address={адрес}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">Адрес — место жительства или регистрации</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?address=<span class="str">addr:Москва, Тверская, 10</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
-    </div>
-
-    <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?auto={грз/vin}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">Авто — VIN-код или госномер</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?auto=<span class="str">A123BC77</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
-    </div>
-
-    <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?nick={ник}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">Никнейм / Юзернейм</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?nick=<span class="str">nick:username</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?fio={фио}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">fio — ФИО</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?fio=<span class="str">Иванов Иван Иванович</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
         <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?text={запрос}&amp;api_key={ключ}</span></div>
-        <div class="endpoint-desc">Любой текстовый запрос (ФИО, название компании) — Адрес + ИНН/СНИЛС</div>
+        <div class="endpoint-desc">text — Любой текстовый запрос (ФИО, название компании — опрашивает глобальный поиск)</div>
         <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?text=<span class="str">Иванов Иван</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
