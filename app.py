@@ -54,115 +54,135 @@ HTML = '''
 </head>
 <body>
 <div class="top-right">
-    <button class="btn-info" onclick="openModal('info')">Info</button>
-    <button class="btn-info" onclick="openModal('stats')">Stats</button>
+    <button class="btn-info" onclick="openModal('info')">Инфо</button>
+    <button class="btn-info" onclick="openModal('stats')">Статистика</button>
 </div>
+
 <div class="modal" id="infoModal">
     <div class="modal-content">
-        <h2>About API</h2>
-        <p><strong>Easy API</strong> is a universal OSINT gateway that combines multiple data sources in one request.</p>
-        <p>All requests go through the single endpoint <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">/search</code> with the <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">api_key</code> parameter.</p>
-        <p>Supported: phone number, email, password, INN, VK, TikTok, SNILS, IP, address, car, nickname, text.</p>
-        <p style="margin-top:16px;color:#64748b;font-size:14px;">API key required for access. Contact the owner to obtain it.</p>
-        <button class="modal-close" onclick="closeModal('info')">Close</button>
+        <h2>Об API</h2>
+        <p><strong>Easy API</strong> — универсальный OSINT-шлюз, объединяющий несколько источников данных в одном запросе.</p>
+        <p>Все запросы проходят через единый эндпоинт <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">/search</code> с параметром <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">api_key</code>.</p>
+        <p>Поддерживаемые типы: номер телефона, email, пароль, ИНН, VK, TikTok, СНИЛС, IP, адрес, автомобиль, никнейм, текст.</p>
+        <p style="margin-top:16px;color:#64748b;font-size:14px;">Для доступа требуется API-ключ. Получить можно у владельца.</p>
+        <button class="modal-close" onclick="closeModal('info')">Закрыть</button>
     </div>
 </div>
+
 <div class="modal" id="statsModal">
     <div class="modal-content">
-        <h2>Statistics</h2>
-        <div class="stat"><span class="stat-label">Records in database</span><span class="stat-value">> 40 000 000 000</span></div>
-        <div class="stat"><span class="stat-label">Data sources</span><span class="stat-value">6</span></div>
-        <div class="stat"><span class="stat-label">Total volume</span><span class="stat-value">~500 TB</span></div>
-        <div class="stat"><span class="stat-label">Query types</span><span class="stat-value">12</span></div>
-        <div class="stat"><span class="stat-label">Availability</span><span class="stat-value" style="color:#22c55e;">24/7</span></div>
-        <button class="modal-close" onclick="closeModal('stats')">Close</button>
+        <h2>Статистика</h2>
+        <div class="stat"><span class="stat-label">Записей в базе</span><span class="stat-value">> 40 000 000 000</span></div>
+        <div class="stat"><span class="stat-label">Источников данных</span><span class="stat-value">6</span></div>
+        <div class="stat"><span class="stat-label">Общий объём</span><span class="stat-value">~500 ТБ</span></div>
+        <div class="stat"><span class="stat-label">Типов запросов</span><span class="stat-value">12</span></div>
+        <div class="stat"><span class="stat-label">Доступность</span><span class="stat-value" style="color:#22c55e;">24/7</span></div>
+        <button class="modal-close" onclick="closeModal('stats')">Закрыть</button>
     </div>
 </div>
+
 <div class="container">
     <div class="logo">Easy API</div>
-    <div class="sub">Documentation</div>
-    <div class="section-title">General Information</div>
+    <div class="sub">Документация</div>
+
+    <div class="section-title">Общая информация</div>
     <div class="endpoint">
         <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:6px;">
             <span><span class="badge badge-get">GET</span> <span class="badge badge-post">POST</span></span>
-            <span><span class="badge badge-auth">API Key Required</span></span>
+            <span><span class="badge badge-auth">Требуется API-ключ</span></span>
         </div>
-        <div><span style="color:#64748b;">Base URL:</span> <span style="color:#0f172a;font-weight:700;">https://easyapi-3r7x.onrender.com</span></div>
-        <div style="margin-top:6px;color:#64748b;font-size:13px;">All requests require <span style="color:#1d4ed8;">api_key</span> parameter.</div>
+        <div><span style="color:#64748b;">Базовый URL:</span> <span style="color:#0f172a;font-weight:700;">https://easyapi-3r7x.onrender.com</span></div>
+        <div style="margin-top:6px;color:#64748b;font-size:13px;">Все запросы требуют параметр <span style="color:#1d4ed8;">api_key</span>.</div>
     </div>
-    <div class="section-title">Search <small>/search</small></div>
+
+    <div class="section-title">Поиск <small>/search</small></div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?phone={number}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">Phone number - automatically cleaned, queries DepSearch</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?phone=<span class="str">79277231370</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?phone={номер}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">Номер телефона — автоматически очищается, запрос в DepSearch</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?phone=<span class="str">79277231370</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?email={email}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">Email - queries DepSearch + Snusbase</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?email=<span class="str">user@gmail.com</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?email={почта}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">Email — запрос в DepSearch + Snusbase</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?email=<span class="str">user@gmail.com</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?pass={password}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">Password - queries DepSearch + Snusbase (password type)</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?pass=<span class="str">qwerty123</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?pass={пароль}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">Пароль — запрос в DepSearch + Snusbase (тип password)</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?pass=<span class="str">qwerty123</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?inn={inn}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">INN - 10 digits (Legal entities/Banks via Ofdata); 12 digits (Individuals/IP via Ofdata); both also query DepSearch</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?inn=<span class="str">7707083893</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?inn={инн}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">ИНН — 10 цифр (юрлица/банки через Ofdata); 12 цифр (физлица/ИП через Ofdata); также DepSearch</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?inn=<span class="str">7707083893</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?vk={id/link}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">VK - ID or link, automatically converts to vkid format</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?vk=<span class="str">1</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?vk={id/ссылка}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">VK — ID или ссылка, автоматически приводит к формату vkid</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?vk=<span class="str">1</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?tiktok={nick/link}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">TikTok - nickname or link, automatically converts to tt format</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?tiktok=<span class="str">tt:username</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?tiktok={ник/ссылка}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">TikTok — никнейм или ссылка, автоматически приводит к формату tt:</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?tiktok=<span class="str">tt:username</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?snils={snils}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">SNILS - converts to snils format</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?snils=<span class="str">12345678901</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?snils={снилс}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">СНИЛС — приводит к формату snils</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?snils=<span class="str">12345678901</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?ip={ip}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">IP address - converts to ip format</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?ip=<span class="str">8.8.8.8</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?ip={ip}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">IP-адрес — приводит к формату ip:</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?ip=<span class="str">8.8.8.8</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?address={address}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">Address - residence or registration address</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?address=<span class="str">addr:Moscow, Tverskaya, 10</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?address={адрес}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">Адрес — место жительства или регистрации</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?address=<span class="str">addr:Москва, Тверская, 10</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?auto={grz/vin}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">Auto - VIN code or license plate</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?auto=<span class="str">A123BC77</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?auto={грз/vin}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">Авто — VIN-код или госномер</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?auto=<span class="str">A123BC77</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?nick={nick}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">Nickname / Username</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?nick=<span class="str">nick:username</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?nick={ник}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">Никнейм / Юзернейм</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?nick=<span class="str">nick:username</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
+
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?text={query}&amp;api_key={key}</span></div>
-        <div class="endpoint-desc">Any text query - FIO, company name - queries Ofdata + DepSearch</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?text=<span class="str">Ivanov Ivan</span>&amp;api_key=<span class="str">YOUR_API_KEY</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?text={запрос}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">Любой текстовый запрос (ФИО, название компании) — Ofdata + DepSearch</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?text=<span class="str">Иванов Иван</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
-    <div class="section-title">Example Response</div>
+
+    <div class="section-title">Пример ответа</div>
     <div class="endpoint">
         <div class="endpoint-example" style="color:#e2e8f0;">
             {<span class="key">"query"</span>: <span class="str">"user@gmail.com"</span>, <span class="key">"type"</span>: <span class="str">"email"</span>, <span class="key">"found"</span>: <span style="color:#22c55e;">true</span>, <span class="key">"sources"</span>: [{<span class="key">"source"</span>: <span class="str">"DepSearch"</span>, <span class="key">"data"</span>: {<span class="key">"results"</span>: [...]}}]}
         </div>
     </div>
-    <div class="section-title">Error Codes</div>
+
+    <div class="section-title">Коды ошибок</div>
     <div class="grid-2">
-        <div class="endpoint"><div style="color:#ef4444;font-weight:700;">401 Unauthorized</div><div style="color:#64748b;font-size:13px;">Invalid or missing API key</div></div>
-        <div class="endpoint"><div style="color:#f59e0b;font-weight:700;">400 Bad Request</div><div style="color:#64748b;font-size:13px;">Missing query parameter</div></div>
-        <div class="endpoint" style="grid-column:span 2;"><div style="color:#22c55e;font-weight:700;">200 OK</div><div style="color:#64748b;font-size:13px;">Successful request (even if no data found)</div></div>
+        <div class="endpoint"><div style="color:#ef4444;font-weight:700;">401 Не авторизован</div><div style="color:#64748b;font-size:13px;">Неверный или отсутствующий API-ключ</div></div>
+        <div class="endpoint"><div style="color:#f59e0b;font-weight:700;">400 Неверный запрос</div><div style="color:#64748b;font-size:13px;">Отсутствует параметр запроса</div></div>
+        <div class="endpoint" style="grid-column:span 2;"><div style="color:#22c55e;font-weight:700;">200 OK</div><div style="color:#64748b;font-size:13px;">Успешный запрос (даже если данные не найдены)</div></div>
     </div>
+
     <div class="footer"><span>Easy API Gateway</span> · <span>@y3Huk_iphone</span></div>
 </div>
 </body>
