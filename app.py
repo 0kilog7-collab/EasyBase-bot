@@ -1,589 +1,173 @@
-from fastapi import FastAPI, Request, Query
-from fastapi.responses import JSONResponse
-import requests
-import re
-import os
-import json
-import secrets
-import string
-from datetime import datetime, timedelta
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import asyncio
-import httpx
-import uvicorn
-import urllib.parse
+from flask import Flask, render_template_string
 
-app = FastAPI()
+app = Flask(__name__)
 
-MASTER_KEY = "hsjdjfhrnjdjd72jrhfbsbxjdndn772hdjd92hrjdjx72nrkfusk8qkrklmrwoco52jrmfn95eufjr"
+HTML = '''
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy API вЂ” Р”РѕРєСѓРјРµРЅС‚Р°С†РёСЏ</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:Inter,Segoe UI,sans-serif;background:#f8fafc;color:#0f172a;padding:40px 20px;line-height:1.6;overflow-x:hidden;position:relative}
+        body:before{content:'';position:fixed;inset:-20%;background:radial-gradient(circle at 10% 20%,rgba(0,255,180,.30),transparent 30%),radial-gradient(circle at 90% 10%,rgba(0,153,255,.25),transparent 30%),radial-gradient(circle at 50% 80%,rgba(120,255,220,.25),transparent 35%);filter:blur(90px);animation:aurora 15s ease-in-out infinite alternate;pointer-events:none}
+        @keyframes aurora{from{transform:translateX(-5%) scale(1)}to{transform:translateX(5%) scale(1.2)}}
+        .container{max-width:1200px;margin:auto;position:relative;z-index:1}
+        .logo{font-size:64px;font-weight:900;text-align:center;background:linear-gradient(90deg,#00c9a7,#0099ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:20px}
+        .sub{text-align:center;color:#64748b;letter-spacing:4px;margin-bottom:50px}
+        .section-title{font-size:32px;font-weight:800;margin:35px 0 20px;color:#0f172a;border:none}
+        .endpoint{background:rgba(255,255,255,.72);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.9);border-radius:24px;padding:24px;margin-bottom:18px;box-shadow:0 12px 40px rgba(15,23,42,.08);transition:.3s}
+        .endpoint:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(15,23,42,.12)}
+        .endpoint-path{color:#0f172a;font-size:18px;font-weight:800;word-break:break-all;display:inline-block;background:#0f172a;color:#e2e8f0;padding:10px 20px;border-radius:12px;font-family:'Courier New',monospace;font-size:15px;margin-top:8px;width:100%;overflow-x:auto;white-space:pre-wrap}
+        .endpoint-desc,.param-desc,.footer,.sub{color:#64748b}
+        .endpoint-example{background:#0f172a;color:#e2e8f0;border:none;border-radius:16px;padding:20px;margin-top:12px;font-family:'Courier New',monospace;font-size:14px;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
+        .key{color:#38bdf8!important}.str{color:#22c55e!important}.val{color:#cbd5e1!important}
+        .badge{padding:8px 14px;border-radius:999px;font-weight:700;font-size:12px;display:inline-block}
+        .badge-get{background:#dcfce7;color:#166534;border:none}
+        .badge-post{background:#fef3c7;color:#92400e;border:none}
+        .badge-auth{background:#dbeafe;color:#1d4ed8;border:none}
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+        .footer{margin-top:50px;text-align:center;padding:30px}
+        .endpoint-header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+        .top-right{position:fixed;top:20px;right:20px;display:flex;gap:12px;z-index:100}
+        .btn-info{padding:10px 22px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;border:none;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);color:#0f172a;box-shadow:0 4px 16px rgba(15,23,42,.08);transition:.3s}
+        .btn-info:hover{transform:scale(1.04);box-shadow:0 8px 30px rgba(15,23,42,.15)}
+        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);z-index:200;justify-content:center;align-items:center}
+        .modal.active{display:flex}
+        .modal-content{background:#fff;border-radius:24px;padding:40px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 40px 80px rgba(0,0,0,.3)}
+        .modal-content h2{font-size:28px;font-weight:800;margin-bottom:20px;color:#0f172a}
+        .modal-content p{color:#475569;margin-bottom:12px;font-size:16px;line-height:1.8}
+        .modal-content .stat{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e2e8f0}
+        .modal-content .stat:last-child{border-bottom:none}
+        .modal-content .stat-label{color:#64748b}
+        .modal-content .stat-value{font-weight:700;color:#0f172a}
+        .modal-close{margin-top:24px;padding:12px 28px;background:#0f172a;color:#fff;border:none;border-radius:12px;font-weight:700;cursor:pointer;font-size:14px}
+        @media(max-width:700px){.logo{font-size:40px}.grid-2{grid-template-columns:1fr}.endpoint-path{font-size:13px;padding:8px 14px}.endpoint-example{font-size:12px}.top-right{top:12px;right:12px;gap:8px}.btn-info{padding:8px 16px;font-size:12px}.modal-content{padding:24px}}
+    </style>
+    <script>
+        function openModal(t){document.getElementById(t+'Modal').classList.add('active')}
+        function closeModal(t){document.getElementById(t+'Modal').classList.remove('active')}
+        window.onclick=function(e){if(e.target.classList.contains('modal')){e.target.classList.remove('active')}}
+    </script>
+</head>
+<body>
+<div class="top-right">
+    <button class="btn-info" onclick="openModal('info')">РРЅС„Рѕ</button>
+    <button class="btn-info" onclick="openModal('stats')">РЎС‚Р°С‚РёСЃС‚РёРєР°</button>
+</div>
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-KEYS_FILE = os.path.join(BASE_DIR, "api_keys.json")
-LOG_FILE = os.path.join(BASE_DIR, "keys_log.txt")
+<div class="modal" id="infoModal">
+    <div class="modal-content">
+        <h2>РћР± API</h2>
+        <p><strong>Easy API</strong> вЂ” СѓРЅРёРІРµСЂСЃР°Р»СЊРЅС‹Р№ OSINT-С€Р»СЋР·, РѕР±СЉРµРґРёРЅСЏСЋС‰РёР№ РЅРµСЃРєРѕР»СЊРєРѕ РёСЃС‚РѕС‡РЅРёРєРѕРІ РґР°РЅРЅС‹С… РІ РѕРґРЅРѕРј Р·Р°РїСЂРѕСЃРµ.</p>
+        <p>Р’СЃРµ Р·Р°РїСЂРѕСЃС‹ РїСЂРѕС…РѕРґСЏС‚ С‡РµСЂРµР· РµРґРёРЅС‹Р№ СЌРЅРґРїРѕРёРЅС‚ <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">/search</code> СЃ РїР°СЂР°РјРµС‚СЂРѕРј <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">api_key</code>.</p>
+        <p>РџРѕРґРґРµСЂР¶РёРІР°РµРјС‹Рµ С‚РёРїС‹: РЅРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°, email, РїР°СЂРѕР»СЊ, РРќРќ, VK, IP, Р¤РРћ, С‚РµРєСЃС‚.</p>
+        <p style="margin-top:16px;color:#64748b;font-size:14px;">Р”Р»СЏ РґРѕСЃС‚СѓРїР° С‚СЂРµР±СѓРµС‚СЃСЏ API-РєР»СЋС‡. РџРѕР»СѓС‡РёС‚СЊ РјРѕР¶РЅРѕ Сѓ РІР»Р°РґРµР»СЊС†Р°.</p>
+        <button class="modal-close" onclick="closeModal('info')">Р—Р°РєСЂС‹С‚СЊ</button>
+    </div>
+</div>
 
-SNUSBASE_KEYS = [
-    "sb5029dec66mht55m78fx8bsw6tm8a",
-    "sbmeovhou6ecsn9fd9wcwnwwvsvwnc"
-]
-OFDATA_KEY = "DiC9ALodH5T12BfR"
-INFINITY_KEY = "N7xQ4Lp2ZWk8F5VcD1mR9H6TyU3E0BJa"
-SEON_KEY = "758f5f54-befb-4125-bd17-931689af6633"
-VK_TOKEN = "0af157510af157510af15751aa0a89e69600af10af157516a0bc15996e74fe2b440998c"
-SHODAN_KEY = "xx6gSg9pWYmJcND1hEMbcWuOJtjbHSZ5"
+<div class="modal" id="statsModal">
+    <div class="modal-content">
+        <h2>РЎС‚Р°С‚РёСЃС‚РёРєР°</h2>
+        <div class="stat"><span class="stat-label">Р—Р°РїРёСЃРµР№ РІ Р±Р°Р·Рµ</span><span class="stat-value">> 40 000 000 000</span></div>
+        <div class="stat"><span class="stat-label">РСЃС‚РѕС‡РЅРёРєРѕРІ РґР°РЅРЅС‹С…</span><span class="stat-value">6</span></div>
+        <div class="stat"><span class="stat-label">РћР±С‰РёР№ РѕР±СЉС‘Рј</span><span class="stat-value">~500 РўР‘</span></div>
+        <div class="stat"><span class="stat-label">РўРёРїРѕРІ Р·Р°РїСЂРѕСЃРѕРІ</span><span class="stat-value">8</span></div>
+        <div class="stat"><span class="stat-label">Р”РѕСЃС‚СѓРїРЅРѕСЃС‚СЊ</span><span class="stat-value" style="color:#22c55e;">24/7</span></div>
+        <button class="modal-close" onclick="closeModal('stats')">Р—Р°РєСЂС‹С‚СЊ</button>
+    </div>
+</div>
 
-DEPSEARCH_TOKENS = [
-    "WDTHx2vqZGE38gchBe7oAewzB9ZPNpxU",
-    "TEST"
-]
+<div class="container">
+    <div class="logo">Easy API</div>
+    <div class="sub">Р”РѕРєСѓРјРµРЅС‚Р°С†РёСЏ</div>
 
-SNUSBASE_URL = "https://api.snusbase.com/data/search"
-OFDATA_BASE = "https://api.ofdata.ru/v2"
-INFINITY_URL = "https://infinity-search.fun/find.php"
-SEON_URL = "https://api.seon.io/SeonRestService/phone-api/v2"
-SHODAN_BASE_URL = "https://api.shodan.io"
-DEPSEARCH_URL = "https://api.depsearch.sbs"
+    <div class="section-title">РћР±С‰Р°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ</div>
+    <div class="endpoint">
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:6px;">
+            <span><span class="badge badge-get">GET</span> <span class="badge badge-post">POST</span></span>
+            <span><span class="badge badge-auth">РўСЂРµР±СѓРµС‚СЃСЏ API-РєР»СЋС‡</span></span>
+        </div>
+        <div><span style="color:#64748b;">Р‘Р°Р·РѕРІС‹Р№ URL:</span> <span style="color:#0f172a;font-weight:700;">https://easyapi-3r7x.onrender.com</span></div>
+        <div style="margin-top:6px;color:#64748b;font-size:13px;">Р’СЃРµ Р·Р°РїСЂРѕСЃС‹ С‚СЂРµР±СѓСЋС‚ РїР°СЂР°РјРµС‚СЂ <span style="color:#1d4ed8;">api_key</span>.</div>
+    </div>
 
-ALLOWED_KEYS = {}
-banned_ips = {}
-failed_attempts = {}
+    <div class="section-title">РџРѕРёСЃРє <small>/search</small></div>
 
-def load_keys():
-    global ALLOWED_KEYS
-    default_keys = {"hdhxhs827dhsb": {"expires_at": None}}
-    if not os.path.exists(KEYS_FILE):
-        try:
-            with open(KEYS_FILE, 'w', encoding='utf-8') as f:
-                json.dump(default_keys, f, indent=2, ensure_ascii=False)
-        except:
-            pass
-        return default_keys
-    try:
-        with open(KEYS_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                migrated = {k: {"expires_at": None} for k in data}
-                with open(KEYS_FILE, 'w', encoding='utf-8') as wf:
-                    json.dump(migrated, wf, indent=2, ensure_ascii=False)
-                return migrated
-            return data
-    except:
-        return default_keys
+    <div class="endpoint">
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?phone={РЅРѕРјРµСЂ}&amp;api_key={РєР»СЋС‡}</span></div>
+        <div class="endpoint-desc">phone вЂ” РќРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?phone=<span class="str">79277231370</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+    </div>
 
-ALLOWED_KEYS = load_keys()
+    <div class="endpoint">
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?email={РїРѕС‡С‚Р°}&amp;api_key={РєР»СЋС‡}</span></div>
+        <div class="endpoint-desc">email вЂ” Р­Р»РµРєС‚СЂРѕРЅРЅР°СЏ РїРѕС‡С‚Р°</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?email=<span class="str">user@gmail.com</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+    </div>
 
-def save_keys_to_file():
-    try:
-        with open(KEYS_FILE, 'w', encoding='utf-8') as f:
-            json.dump(ALLOWED_KEYS, f, indent=2, ensure_ascii=False)
-    except:
-        pass
+    <div class="endpoint">
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?pass={РїР°СЂРѕР»СЊ}&amp;api_key={РєР»СЋС‡}</span></div>
+        <div class="endpoint-desc">pass вЂ” РџР°СЂРѕР»СЊ</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?pass=<span class="str">qwerty123</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+    </div>
 
-def write_to_log(message):
-    print(message)
-    try:
-        with open(LOG_FILE, 'a', encoding='utf-8') as f:
-            f.write(f"{message}\n")
-    except Exception as e:
-        print(f"[ERROR LOGGING] {e}")
+    <div class="endpoint">
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?inn={РёРЅРЅ}&amp;api_key={РєР»СЋС‡}</span></div>
+        <div class="endpoint-desc">inn вЂ” РРќРќ (10 С†РёС„СЂ вЂ” Р®СЂР»РёС†Р°/Р‘Р°РЅРєРё; 12 С†РёС„СЂ вЂ” Р¤РёР·Р»РёС†Р°/РРџ)</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?inn=<span class="str">7707083893</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+    </div>
 
-def generate_random_key(length=24):
-    alphabet = string.ascii_letters + string.digits
-    return ''.join(secrets.choice(alphabet) for _ in range(length))
+    <div class="endpoint">
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?vkid={id/СЃСЃС‹Р»РєР°}&amp;api_key={РєР»СЋС‡}</span></div>
+        <div class="endpoint-desc">vkid вЂ” РЎСЃС‹Р»РєР° РёР»Рё ID Р’РљРѕРЅС‚Р°РєС‚Рµ</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?vkid=<span class="str">1</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+    </div>
 
-def parse_duration(duration_str):
-    if not duration_str:
-        return None
-    match = re.match(r'^(\d+)\s*(day|days|hour|hours|min|mins|minute|minutes)$', str(duration_str).strip().lower())
-    if not match:
-        return None
-    amount = int(match.group(1))
-    unit = match.group(2)
-    if 'day' in unit:
-        return timedelta(days=amount)
-    elif 'hour' in unit:
-        return timedelta(hours=amount)
-    elif 'min' in unit:
-        return timedelta(minutes=amount)
-    return None
+    <div class="endpoint">
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?ip={ip}&amp;api_key={РєР»СЋС‡}</span></div>
+        <div class="endpoint-desc">ip вЂ” IP-Р°РґСЂРµСЃ</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?ip=<span class="str">8.8.8.8</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+    </div>
 
-def get_real_ip(request: Request):
-    forwarded = request.headers.get('X-Forwarded-For')
-    if forwarded:
-        return forwarded.split(',')[0].strip()
-    return request.client.host if request.client else "127.0.0.1"
+    <div class="endpoint">
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?fio={С„РёРѕ}&amp;api_key={РєР»СЋС‡}</span></div>
+        <div class="endpoint-desc">fio вЂ” Р¤РРћ</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?fio=<span class="str">РРІР°РЅРѕРІ РРІР°РЅ РРІР°РЅРѕРІРёС‡</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+    </div>
 
-def is_ip_banned(ip):
-    if ip in banned_ips:
-        if datetime.now() < banned_ips[ip]:
-            return True
-        else:
-            del banned_ips[ip]
-    return False
+    <div class="endpoint">
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?text={Р·Р°РїСЂРѕСЃ}&amp;api_key={РєР»СЋС‡}</span></div>
+        <div class="endpoint-desc">text вЂ” Р›СЋР±РѕР№ С‚РµРєСЃС‚РѕРІС‹Р№ Р·Р°РїСЂРѕСЃ (Р¤РРћ, РЅР°Р·РІР°РЅРёРµ РєРѕРјРїР°РЅРёРё вЂ” РѕРїСЂР°С€РёРІР°РµС‚ РіР»РѕР±Р°Р»СЊРЅС‹Р№ РїРѕРёСЃРє)</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?text=<span class="str">РРІР°РЅРѕРІ РРІР°РЅ</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+    </div>
 
-def ban_ip(ip, days=30):
-    banned_ips[ip] = datetime.now() + timedelta(days=days)
+    <div class="section-title">РџСЂРёРјРµСЂ РѕС‚РІРµС‚Р°</div>
+    <div class="endpoint">
+        <div class="endpoint-example" style="color:#e2e8f0;">
+            {<span class="key">"query"</span>: <span class="str">"user@gmail.com"</span>, <span class="key">"type"</span>: <span class="str">"email"</span>, <span class="key">"found"</span>: <span style="color:#22c55e;">true</span>, <span class="key">"sources"</span>: [{<span class="key">"source"</span>: <span class="str">"DepSearch"</span>, <span class="key">"data"</span>: {<span class="key">"results"</span>: [...]}}]}
+        </div>
+    </div>
 
-def check_auth(request: Request):
-    ip = get_real_ip(request)
-    auth_key = request.headers.get("X-API-Key") or request.query_params.get("api_key")
-    
-    if is_ip_banned(ip):
-        return False
-    
-    if ip in failed_attempts and failed_attempts[ip] >= 15:
-        ban_ip(ip, 30)
-        return False
-    
-    if not auth_key:
-        failed_attempts[ip] = failed_attempts.get(ip, 0) + 1
-        return False
-    
-    if auth_key == MASTER_KEY:
-        failed_attempts[ip] = 0
-        return True
-    
-    if auth_key in ALLOWED_KEYS:
-        expires_at_str = ALLOWED_KEYS[auth_key].get("expires_at")
-        if expires_at_str:
-            expires_at = datetime.strptime(expires_at_str, "%Y-%m-%d %H:%M:%S")
-            if datetime.now() > expires_at:
-                write_to_log(f"[EXPIRED LOG] [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Ключ '{auth_key}' заблокирован ({expires_at_str}).")
-                return False
-        failed_attempts[ip] = 0
-        return True
-    
-    failed_attempts[ip] = failed_attempts.get(ip, 0) + 1
-    return False
+    <div class="section-title">РљРѕРґС‹ РѕС€РёР±РѕРє</div>
+    <div class="grid-2">
+        <div class="endpoint"><div style="color:#ef4444;font-weight:700;">401 РќРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ</div><div style="color:#64748b;font-size:13px;">РќРµРІРµСЂРЅС‹Р№ РёР»Рё РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‰РёР№ API-РєР»СЋС‡</div></div>
+        <div class="endpoint"><div style="color:#f59e0b;font-weight:700;">400 РќРµРІРµСЂРЅС‹Р№ Р·Р°РїСЂРѕСЃ</div><div style="color:#64748b;font-size:13px;">РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РїР°СЂР°РјРµС‚СЂ Р·Р°РїСЂРѕСЃР°</div></div>
+        <div class="endpoint" style="grid-column:span 2;"><div style="color:#22c55e;font-weight:700;">200 OK</div><div style="color:#64748b;font-size:13px;">РЈСЃРїРµС€РЅС‹Р№ Р·Р°РїСЂРѕСЃ (РґР°Р¶Рµ РµСЃР»Рё РґР°РЅРЅС‹Рµ РЅРµ РЅР°Р№РґРµРЅС‹)</div></div>
+    </div>
 
-def sanitize_query(query):
-    if not query:
-        return query
-    return re.sub(r'[^a-zA-Z0-9\s@\.\-_+:яёА-ЯЁ]', '', query)
+    <div class="footer"><span>Easy API Gateway</span> В· <span>@y3Huk_iphone</span></div>
+</div>
+</body>
+</html>
+'''
 
-SUPPORTED_PARAMS = ['pass', 'email', 'inn', 'text', 'фио', 'fio', 'phone', 'vkid', 'ip', 'snils', 'passport', 'ogrn', 'company']
+@app.route('/')
+def home():
+    return render_template_string(HTML)
 
-def detect_type(query):
-    q = str(query).strip()
-    q_lower = q.lower()
-    
-    if q_lower.startswith('pass:'):
-        return "pass"
-    if q_lower.startswith('inn') or (re.match(r'^\d{10}$|^\d{12}$', re.sub(r'[^\d]', '', q)) and len(re.sub(r'[^\d]', '', q)) in [10, 12]):
-        return "inn"
-    if re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', q):
-        return "email"
-    if re.match(r'^\+?\d{10,15}$', re.sub(r'[^\d+]', '', q)):
-        return "phone"
-    if re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', q):
-        return "ip"
-    if re.match(r'^[0-9]{4}\s?[0-9]{6}$', q) or re.match(r'^[А-Я]{2}\s?[0-9]{7}$', q):
-        return "passport"
-    if re.match(r'^[0-9]{3}-?[0-9]{3}-?[0-9]{3}-?[0-9]{2}$', q):
-        return "snils"
-    if re.match(r'^\d{13}$', q):
-        return "ogrn"
-    if re.match(r'^[А-ЯЁA-Z][а-яёa-zА-ЯЁA-Z0-9\s\-\.\,]+$', q) and len(q) > 3:
-        return "company"
-    return "text"
-
-async def query_depsearch(query: str):
-    async with httpx.AsyncClient(timeout=15.0) as client:
-        for token in DEPSEARCH_TOKENS:
-            try:
-                url = f"{DEPSEARCH_URL}/quest={query}&token={token}&lang=ru"
-                resp = await client.get(url)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    if "error" not in data or "Превышен лимит" not in data.get("error", ""):
-                        return {"source": "DepSearch", "data": data}
-            except Exception:
-                continue
-    return {"source": "DepSearch", "error": "DepSearch unavailable"}
-
-def snusbase(query, search_type):
-    try:
-        headers = {"Content-Type": "application/json"}
-        snus_type = "password" if search_type == "pass" else "email"
-        payload = {"terms": [str(query).strip()], "types": [snus_type], "wildcard": False}
-        
-        for key in SNUSBASE_KEYS:
-            try:
-                headers["Auth"] = key
-                r = requests.post(SNUSBASE_URL, headers=headers, json=payload, timeout=8)
-                if r.status_code == 200:
-                    return {"source": "Snusbase", "data": r.json()}
-                if r.status_code in [402, 429]:
-                    continue
-                return {"source": "Snusbase", "error": r.status_code}
-            except:
-                continue
-        return {"source": "Snusbase", "error": "All keys exhausted"}
-    except:
-        return {"source": "Snusbase", "error": 504}
-
-def ofdata(query, search_type):
-    q = str(query).strip()
-    headers = {"User-Agent": "Mozilla/5.0"}
-    collected_data = {}
-    status_code = 404
-
-    type_map = {
-        "inn": ("person", "inn"),
-        "phone": ("search", "phone"),
-        "email": ("search", "email"),
-        "passport": ("person", "passport"),
-        "snils": ("person", "snils"),
-        "fio": ("search", "fio"),
-        "фио": ("search", "fio"),
-        "ogrn": ("company", "ogrn"),
-        "company": ("company", "query"),
-        "text": ("search", "query")
-    }
-
-    endpoint, param = type_map.get(search_type, ("search", "query"))
-    
-    if search_type == "company":
-        if re.match(r'^\d{10}$|^\d{12}$', q):
-            url = f"{OFDATA_BASE}/company?key={OFDATA_KEY}&inn={q}"
-        elif re.match(r'^\d{13}$', q):
-            url = f"{OFDATA_BASE}/company?key={OFDATA_KEY}&ogrn={q}"
-        else:
-            url = f"{OFDATA_BASE}/company?key={OFDATA_KEY}&query={requests.utils.quote(q)}"
-        try:
-            r = requests.get(url, headers=headers, timeout=8)
-            status_code = r.status_code
-            if r.status_code == 200:
-                collected_data["company_info"] = r.json()
-        except:
-            status_code = 504
-        return {"source": "Ofdata", "data": collected_data} if collected_data else {"source": "Ofdata", "error": status_code}
-
-    if search_type in ["fio", "фио"]:
-        parts = q.split()
-        if len(parts) >= 2:
-            params = {
-                "key": OFDATA_KEY,
-                "first_name": parts[0],
-                "last_name": parts[1],
-                "middle_name": parts[2] if len(parts) > 2 else ""
-            }
-            url = f"{OFDATA_BASE}/search"
-            try:
-                r = requests.get(url, headers=headers, params=params, timeout=8)
-                status_code = r.status_code
-                if r.status_code == 200:
-                    collected_data["search_results"] = r.json()
-            except:
-                status_code = 504
-            return {"source": "Ofdata", "data": collected_data} if collected_data else {"source": "Ofdata", "error": status_code}
-
-    params = {"key": OFDATA_KEY, param: q}
-    url = f"{OFDATA_BASE}/{endpoint}"
-    try:
-        r = requests.get(url, headers=headers, params=params, timeout=8)
-        status_code = r.status_code
-        if r.status_code == 200:
-            collected_data["result"] = r.json()
-    except:
-        status_code = 504
-
-    if collected_data:
-        return {"source": "Ofdata", "data": collected_data}
-    return {"source": "Ofdata", "error": status_code}
-
-def infinity_check(query, search_type):
-    try:
-        session = requests.Session()
-        from requests.adapters import HTTPAdapter
-        from urllib3.util import Retry
-        retries = Retry(total=2, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
-        session.mount('https://', HTTPAdapter(max_retries=retries))
-        
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-            "Accept": "application/json, text/plain, */*",
-            "Connection": "keep-alive"
-        }
-        
-        q = str(query).strip()
-        param_name = None
-        if search_type == "phone":
-            param_name = "phone"
-        elif search_type == "email":
-            param_name = "email"
-        elif search_type in ["text", "фио", "fio", "company"]:
-            param_name = "fio"
-            
-        if not param_name:
-            return None
-
-        params = {param_name: q, "token": INFINITY_KEY}
-        r = session.get(INFINITY_URL, headers=headers, params=params, timeout=(3, 8))
-        if r.status_code == 200:
-            try:
-                res_data = r.json()
-            except:
-                res_data = r.text
-            return {"source": "InfinityCheck", "data": res_data}
-        return {"source": "InfinityCheck", "error": r.status_code}
-    except:
-        return {"source": "InfinityCheck", "error": 504}
-
-def lookup_phone_via_seon(query):
-    try:
-        clean_phone = re.sub(r'[^\d]', '', str(query).strip())
-        headers = {"X-API-KEY": SEON_KEY, "Content-Type": "application/json"}
-        payload = {"phone": clean_phone}
-        r = requests.post(SEON_URL, headers=headers, json=payload, timeout=8)
-        if r.status_code == 200:
-            return {"source": "SEON", "data": r.json()}
-        return {"source": "SEON", "error": r.status_code}
-    except:
-        return {"source": "SEON", "error": 504}
-
-def lookup_vk(query):
-    try:
-        url = "https://api.vk.com/method/users.get"
-        params = {
-            "user_ids": str(query).strip(),
-            "access_token": VK_TOKEN,
-            "v": "5.199",
-            "fields": "first_name,last_name,bdate,city,country,contacts,online"
-        }
-        r = requests.get(url, params=params, timeout=8)
-        if r.status_code == 200:
-            return {"source": "VK", "data": r.json()}
-        return {"source": "VK", "error": r.status_code}
-    except:
-        return {"source": "VK", "error": 504}
-
-def lookup_shodan(query):
-    try:
-        ip = str(query).strip()
-        url = f"{SHODAN_BASE_URL}/shodan/host/{ip}"
-        params = {"key": SHODAN_KEY}
-        r = requests.get(url, params=params, timeout=8)
-        
-        if r.status_code == 403:
-            fallback_url = f"https://internetdb.shodan.io/{ip}"
-            r_fallback = requests.get(fallback_url, timeout=8)
-            if r_fallback.status_code == 200:
-                return {"source": "Shodan (InternetDB Fallback)", "data": r_fallback.json()}
-            return {"source": "Shodan", "error": r_fallback.status_code}
-                
-        if r.status_code == 200:
-            return {"source": "Shodan", "data": r.json()}
-        return {"source": "Shodan", "error": r.status_code}
-    except:
-        return {"source": "Shodan", "error": 504}
-
-@app.api_route("/search", methods=["GET", "POST"])
-async def search(request: Request):
-    try:
-        if not check_auth(request):
-            ip = get_real_ip(request)
-            if is_ip_banned(ip):
-                return JSONResponse({"error": "Your IP is banned for 30 days."}, 403)
-            return JSONResponse({"error": "Unauthorized."}, 401)
-
-        query = None
-        search_type = None
-
-        if request.method == "POST":
-            try:
-                data = await request.json()
-            except:
-                data = {}
-            for param in SUPPORTED_PARAMS:
-                if param in data:
-                    query = data[param]
-                    search_type = param
-                    break
-            if not query:
-                query = data.get('query') or data.get('search')
-        else:
-            for param in SUPPORTED_PARAMS:
-                val = request.query_params.get(param)
-                if val:
-                    query = val
-                    search_type = param
-                    break
-            if not query:
-                query = request.query_params.get('query') or request.query_params.get('search')
-        
-        if not query:
-            return JSONResponse({"error": "Missing search term"}, 400)
-        
-        query = sanitize_query(query)
-        
-        if not search_type:
-            search_type = detect_type(query)
-        
-        result = {
-            "query": query,
-            "type": search_type,
-            "found": False,
-            "sources": []
-        }
-        
-        with ThreadPoolExecutor(max_workers=2) as executor:
-            futures = {}
-            
-            depsearch_future = executor.submit(asyncio.run, query_depsearch(query))
-            futures[depsearch_future] = "dep"
-            
-            if search_type in ["email", "pass"]:
-                futures[executor.submit(snusbase, query, search_type)] = "sn"
-                
-            if search_type in ["inn", "text", "фио", "fio", "snils", "passport", "ogrn", "company"]:
-                futures[executor.submit(ofdata, query, search_type)] = "of"
-                
-            if search_type in ["phone", "email", "text", "фио", "fio", "company"]:
-                futures[executor.submit(infinity_check, query, search_type)] = "inf"
-
-            if search_type == "phone":
-                futures[executor.submit(lookup_phone_via_seon, query)] = "seon"
-
-            if search_type == "vkid":
-                futures[executor.submit(lookup_vk, query)] = "vk"
-
-            if search_type == "ip":
-                futures[executor.submit(lookup_shodan, query)] = "shodan"
-                
-            for future in as_completed(futures):
-                res = future.result()
-                if res and "data" in res:
-                    result["sources"].append({
-                        "source": res["source"],
-                        "data": res["data"]
-                    })
-            
-            if result["sources"]:
-                result["found"] = True
-        
-        return JSONResponse(result)
-    except Exception as e:
-        return JSONResponse({"error": "Internal server error", "details": str(e)}, 500)
-
-@app.api_route("/key/create", methods=["POST", "GET"])
-async def create_key(request: Request):
-    try:
-        master = request.headers.get("X-Master-Key") or request.query_params.get("master_key")
-        if request.method == "POST":
-            try:
-                data = await request.json()
-            except:
-                data = {}
-            if not master:
-                master = data.get("master_key")
-        
-        if master != MASTER_KEY:
-            return JSONResponse({"error": "Unauthorized."}, 401)
-        
-        new_key = request.query_params.get("new_key")
-        duration_param = request.query_params.get("duration")
-        if request.method == "POST":
-            try:
-                data = await request.json()
-            except:
-                data = {}
-            if not new_key:
-                new_key = data.get("new_key")
-            if not duration_param:
-                duration_param = data.get("duration")
-        
-        global ALLOWED_KEYS
-
-        if not new_key:
-            while True:
-                new_key = generate_random_key(24)
-                if new_key not in ALLOWED_KEYS:
-                    break
-        else:
-            if new_key in ALLOWED_KEYS:
-                return JSONResponse({"error": "Already exists."}, 400)
-        
-        expires_at_str = None
-        if duration_param:
-            time_delta = parse_duration(duration_param)
-            if time_delta:
-                expire_datetime = datetime.now() + time_delta
-                expires_at_str = expire_datetime.strftime("%Y-%m-%d %H:%M:%S")
-            else:
-                return JSONResponse({"error": "Invalid duration format."}, 400)
-        
-        ALLOWED_KEYS[new_key] = {"expires_at": expires_at_str}
-        save_keys_to_file()
-        
-        log_msg = f"[CREATE LOG] [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Ключ: '{new_key}' | Истекает: {expires_at_str if expires_at_str else 'Permanent'}"
-        write_to_log(log_msg)
-        
-        return JSONResponse({
-            "success": True,
-            "key": new_key,
-            "expires_at": expires_at_str if expires_at_str else "Permanent"
-        })
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, 500)
-
-@app.api_route("/key/delete", methods=["POST", "GET"])
-async def delete_key(request: Request):
-    try:
-        master = request.headers.get("X-Master-Key") or request.query_params.get("master_key")
-        if request.method == "POST":
-            try:
-                data = await request.json()
-            except:
-                data = {}
-            if not master:
-                master = data.get("master_key")
-        
-        if master != MASTER_KEY:
-            return JSONResponse({"error": "Unauthorized."}, 401)
-        
-        target_key = request.query_params.get("target_key")
-        if request.method == "POST":
-            try:
-                data = await request.json()
-            except:
-                data = {}
-            if not target_key:
-                target_key = data.get("target_key")
-        
-        if not target_key:
-            return JSONResponse({"error": "Missing parameter."}, 400)
-        
-        global ALLOWED_KEYS
-        if target_key not in ALLOWED_KEYS:
-            return JSONResponse({"error": "Not found."}, 404)
-        
-        del ALLOWED_KEYS[target_key]
-        save_keys_to_file()
-        
-        log_msg = f"[DELETE LOG] [{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Удален ключ: '{target_key}'"
-        write_to_log(log_msg)
-        
-        return JSONResponse({"success": True, "message": "Removed."})
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, 500)
-
-@app.get("/key/list")
-async def list_keys(request: Request):
-    try:
-        master = request.headers.get("X-Master-Key") or request.query_params.get("master_key")
-        if master != MASTER_KEY:
-            return JSONResponse({"error": "Unauthorized."}, 401)
-        return JSONResponse({"allowed_api_keys": ALLOWED_KEYS})
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, 500)
-
-@app.get("/")
-async def home():
-    return JSONResponse({
-        "name": "EasyApi",
-        "author": "@y3Huk_iphone"
-    })
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    uvicorn.run(app, host="0.0.0.0", port=port, workers=1)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=False)
