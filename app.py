@@ -420,7 +420,7 @@ async def search(request: Request):
             "query": query,
             "type": search_type,
             "found": False,
-            "data": None
+            "sources": []
         }
         
         with ThreadPoolExecutor(max_workers=2) as executor:
@@ -446,18 +446,16 @@ async def search(request: Request):
             if search_type == "ip":
                 futures[executor.submit(lookup_shodan, query)] = "shodan"
                 
-            all_data = []
             for future in as_completed(futures):
                 res = future.result()
                 if res and "data" in res:
-                    all_data.append(res["data"])
+                    result["sources"].append({
+                        "source": res["source"],
+                        "data": res["data"]
+                    })
             
-            if all_data:
+            if result["sources"]:
                 result["found"] = True
-                result["data"] = all_data
-            else:
-                result["found"] = False
-                result["data"] = None
         
         return JSONResponse(result)
     except Exception as e:
