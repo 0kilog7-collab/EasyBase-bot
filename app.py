@@ -8,7 +8,7 @@ HTML = '''
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy API вЂ” Р”РѕРєСѓРјРµРЅС‚Р°С†РёСЏ</title>
+    <title>Easy API — Документация</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:Inter,Segoe UI,sans-serif;background:#f8fafc;color:#0f172a;padding:40px 20px;line-height:1.6;overflow-x:hidden;position:relative}
@@ -54,112 +54,112 @@ HTML = '''
 </head>
 <body>
 <div class="top-right">
-    <button class="btn-info" onclick="openModal('info')">РРЅС„Рѕ</button>
-    <button class="btn-info" onclick="openModal('stats')">РЎС‚Р°С‚РёСЃС‚РёРєР°</button>
+    <button class="btn-info" onclick="openModal('info')">Инфо</button>
+    <button class="btn-info" onclick="openModal('stats')">Статистика</button>
 </div>
 
 <div class="modal" id="infoModal">
     <div class="modal-content">
-        <h2>РћР± API</h2>
-        <p><strong>Easy API</strong> вЂ” СѓРЅРёРІРµСЂСЃР°Р»СЊРЅС‹Р№ OSINT-С€Р»СЋР·, РѕР±СЉРµРґРёРЅСЏСЋС‰РёР№ РЅРµСЃРєРѕР»СЊРєРѕ РёСЃС‚РѕС‡РЅРёРєРѕРІ РґР°РЅРЅС‹С… РІ РѕРґРЅРѕРј Р·Р°РїСЂРѕСЃРµ.</p>
-        <p>Р’СЃРµ Р·Р°РїСЂРѕСЃС‹ РїСЂРѕС…РѕРґСЏС‚ С‡РµСЂРµР· РµРґРёРЅС‹Р№ СЌРЅРґРїРѕРёРЅС‚ <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">/search</code> СЃ РїР°СЂР°РјРµС‚СЂРѕРј <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">api_key</code>.</p>
-        <p>РџРѕРґРґРµСЂР¶РёРІР°РµРјС‹Рµ С‚РёРїС‹: РЅРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°, email, РїР°СЂРѕР»СЊ, РРќРќ, VK, IP, Р¤РРћ, С‚РµРєСЃС‚.</p>
-        <p style="margin-top:16px;color:#64748b;font-size:14px;">Р”Р»СЏ РґРѕСЃС‚СѓРїР° С‚СЂРµР±СѓРµС‚СЃСЏ API-РєР»СЋС‡. РџРѕР»СѓС‡РёС‚СЊ РјРѕР¶РЅРѕ Сѓ РІР»Р°РґРµР»СЊС†Р°.</p>
-        <button class="modal-close" onclick="closeModal('info')">Р—Р°РєСЂС‹С‚СЊ</button>
+        <h2>Об API</h2>
+        <p><strong>Easy API</strong> — универсальный OSINT-шлюз, объединяющий несколько источников данных в одном запросе.</p>
+        <p>Все запросы проходят через единый эндпоинт <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">/search</code> с параметром <code style="background:#f1f5f9;padding:2px 8px;border-radius:6px;">api_key</code>.</p>
+        <p>Поддерживаемые типы: номер телефона, email, пароль, ИНН, VK, IP, ФИО, текст.</p>
+        <p style="margin-top:16px;color:#64748b;font-size:14px;">Для доступа требуется API-ключ. Получить можно у владельца.</p>
+        <button class="modal-close" onclick="closeModal('info')">Закрыть</button>
     </div>
 </div>
 
 <div class="modal" id="statsModal">
     <div class="modal-content">
-        <h2>РЎС‚Р°С‚РёСЃС‚РёРєР°</h2>
-        <div class="stat"><span class="stat-label">Р—Р°РїРёСЃРµР№ РІ Р±Р°Р·Рµ</span><span class="stat-value">> 40 000 000 000</span></div>
-        <div class="stat"><span class="stat-label">РСЃС‚РѕС‡РЅРёРєРѕРІ РґР°РЅРЅС‹С…</span><span class="stat-value">6</span></div>
-        <div class="stat"><span class="stat-label">РћР±С‰РёР№ РѕР±СЉС‘Рј</span><span class="stat-value">~500 РўР‘</span></div>
-        <div class="stat"><span class="stat-label">РўРёРїРѕРІ Р·Р°РїСЂРѕСЃРѕРІ</span><span class="stat-value">8</span></div>
-        <div class="stat"><span class="stat-label">Р”РѕСЃС‚СѓРїРЅРѕСЃС‚СЊ</span><span class="stat-value" style="color:#22c55e;">24/7</span></div>
-        <button class="modal-close" onclick="closeModal('stats')">Р—Р°РєСЂС‹С‚СЊ</button>
+        <h2>Статистика</h2>
+        <div class="stat"><span class="stat-label">Записей в базе</span><span class="stat-value">> 40 000 000 000</span></div>
+        <div class="stat"><span class="stat-label">Источников данных</span><span class="stat-value">6</span></div>
+        <div class="stat"><span class="stat-label">Общий объём</span><span class="stat-value">~500 ТБ</span></div>
+        <div class="stat"><span class="stat-label">Типов запросов</span><span class="stat-value">8</span></div>
+        <div class="stat"><span class="stat-label">Доступность</span><span class="stat-value" style="color:#22c55e;">24/7</span></div>
+        <button class="modal-close" onclick="closeModal('stats')">Закрыть</button>
     </div>
 </div>
 
 <div class="container">
     <div class="logo">Easy API</div>
-    <div class="sub">Р”РѕРєСѓРјРµРЅС‚Р°С†РёСЏ</div>
+    <div class="sub">Документация</div>
 
-    <div class="section-title">РћР±С‰Р°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ</div>
+    <div class="section-title">Общая информация</div>
     <div class="endpoint">
         <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:6px;">
             <span><span class="badge badge-get">GET</span> <span class="badge badge-post">POST</span></span>
-            <span><span class="badge badge-auth">РўСЂРµР±СѓРµС‚СЃСЏ API-РєР»СЋС‡</span></span>
+            <span><span class="badge badge-auth">Требуется API-ключ</span></span>
         </div>
-        <div><span style="color:#64748b;">Р‘Р°Р·РѕРІС‹Р№ URL:</span> <span style="color:#0f172a;font-weight:700;">https://easyapi-3r7x.onrender.com</span></div>
-        <div style="margin-top:6px;color:#64748b;font-size:13px;">Р’СЃРµ Р·Р°РїСЂРѕСЃС‹ С‚СЂРµР±СѓСЋС‚ РїР°СЂР°РјРµС‚СЂ <span style="color:#1d4ed8;">api_key</span>.</div>
+        <div><span style="color:#64748b;">Базовый URL:</span> <span style="color:#0f172a;font-weight:700;">https://easyapi-3r7x.onrender.com</span></div>
+        <div style="margin-top:6px;color:#64748b;font-size:13px;">Все запросы требуют параметр <span style="color:#1d4ed8;">api_key</span>.</div>
     </div>
 
-    <div class="section-title">РџРѕРёСЃРє <small>/search</small></div>
+    <div class="section-title">Поиск <small>/search</small></div>
 
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?phone={РЅРѕРјРµСЂ}&amp;api_key={РєР»СЋС‡}</span></div>
-        <div class="endpoint-desc">phone вЂ” РќРѕРјРµСЂ С‚РµР»РµС„РѕРЅР°</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?phone=<span class="str">79277231370</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
-    </div>
-
-    <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?email={РїРѕС‡С‚Р°}&amp;api_key={РєР»СЋС‡}</span></div>
-        <div class="endpoint-desc">email вЂ” Р­Р»РµРєС‚СЂРѕРЅРЅР°СЏ РїРѕС‡С‚Р°</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?email=<span class="str">user@gmail.com</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?phone={номер}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">phone — Номер телефона</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?phone=<span class="str">79277231370</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?pass={РїР°СЂРѕР»СЊ}&amp;api_key={РєР»СЋС‡}</span></div>
-        <div class="endpoint-desc">pass вЂ” РџР°СЂРѕР»СЊ</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?pass=<span class="str">qwerty123</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?email={почта}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">email — Электронная почта</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?email=<span class="str">user@gmail.com</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?inn={РёРЅРЅ}&amp;api_key={РєР»СЋС‡}</span></div>
-        <div class="endpoint-desc">inn вЂ” РРќРќ (10 С†РёС„СЂ вЂ” Р®СЂР»РёС†Р°/Р‘Р°РЅРєРё; 12 С†РёС„СЂ вЂ” Р¤РёР·Р»РёС†Р°/РРџ)</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?inn=<span class="str">7707083893</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?pass={пароль}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">pass — Пароль</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?pass=<span class="str">qwerty123</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?vkid={id/СЃСЃС‹Р»РєР°}&amp;api_key={РєР»СЋС‡}</span></div>
-        <div class="endpoint-desc">vkid вЂ” РЎСЃС‹Р»РєР° РёР»Рё ID Р’РљРѕРЅС‚Р°РєС‚Рµ</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?vkid=<span class="str">1</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?inn={инн}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">inn — ИНН (10 цифр — Юрлица/Банки; 12 цифр — Физлица/ИП)</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?inn=<span class="str">7707083893</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?ip={ip}&amp;api_key={РєР»СЋС‡}</span></div>
-        <div class="endpoint-desc">ip вЂ” IP-Р°РґСЂРµСЃ</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?ip=<span class="str">8.8.8.8</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?vkid={id/ссылка}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">vkid — Ссылка или ID ВКонтакте</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?vkid=<span class="str">1</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?fio={С„РёРѕ}&amp;api_key={РєР»СЋС‡}</span></div>
-        <div class="endpoint-desc">fio вЂ” Р¤РРћ</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?fio=<span class="str">РРІР°РЅРѕРІ РРІР°РЅ РРІР°РЅРѕРІРёС‡</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?ip={ip}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">ip — IP-адрес</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?ip=<span class="str">8.8.8.8</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
     <div class="endpoint">
-        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?text={Р·Р°РїСЂРѕСЃ}&amp;api_key={РєР»СЋС‡}</span></div>
-        <div class="endpoint-desc">text вЂ” Р›СЋР±РѕР№ С‚РµРєСЃС‚РѕРІС‹Р№ Р·Р°РїСЂРѕСЃ (Р¤РРћ, РЅР°Р·РІР°РЅРёРµ РєРѕРјРїР°РЅРёРё вЂ” РѕРїСЂР°С€РёРІР°РµС‚ РіР»РѕР±Р°Р»СЊРЅС‹Р№ РїРѕРёСЃРє)</div>
-        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?text=<span class="str">РРІР°РЅРѕРІ РРІР°РЅ</span>&amp;api_key=<span class="str">Р’РђРЁ_РљР›Р®Р§</span></span>"</div>
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?fio={фио}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">fio — ФИО</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?fio=<span class="str">Иванов Иван Иванович</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
     </div>
 
-    <div class="section-title">РџСЂРёРјРµСЂ РѕС‚РІРµС‚Р°</div>
+    <div class="endpoint">
+        <div class="endpoint-header"><span class="badge badge-get">GET</span><span class="endpoint-path">/search?text={запрос}&amp;api_key={ключ}</span></div>
+        <div class="endpoint-desc">text — Любой текстовый запрос (ФИО, название компании — опрашивает глобальный поиск)</div>
+        <div class="endpoint-example"><span class="key">curl</span> "<span class="val">https://easyapi-3r7x.onrender.com/search?text=<span class="str">Иванов Иван</span>&amp;api_key=<span class="str">ВАШ_КЛЮЧ</span></span>"</div>
+    </div>
+
+    <div class="section-title">Пример ответа</div>
     <div class="endpoint">
         <div class="endpoint-example" style="color:#e2e8f0;">
             {<span class="key">"query"</span>: <span class="str">"user@gmail.com"</span>, <span class="key">"type"</span>: <span class="str">"email"</span>, <span class="key">"found"</span>: <span style="color:#22c55e;">true</span>, <span class="key">"sources"</span>: [{<span class="key">"source"</span>: <span class="str">"DepSearch"</span>, <span class="key">"data"</span>: {<span class="key">"results"</span>: [...]}}]}
         </div>
     </div>
 
-    <div class="section-title">РљРѕРґС‹ РѕС€РёР±РѕРє</div>
+    <div class="section-title">Коды ошибок</div>
     <div class="grid-2">
-        <div class="endpoint"><div style="color:#ef4444;font-weight:700;">401 РќРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ</div><div style="color:#64748b;font-size:13px;">РќРµРІРµСЂРЅС‹Р№ РёР»Рё РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‰РёР№ API-РєР»СЋС‡</div></div>
-        <div class="endpoint"><div style="color:#f59e0b;font-weight:700;">400 РќРµРІРµСЂРЅС‹Р№ Р·Р°РїСЂРѕСЃ</div><div style="color:#64748b;font-size:13px;">РћС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РїР°СЂР°РјРµС‚СЂ Р·Р°РїСЂРѕСЃР°</div></div>
-        <div class="endpoint" style="grid-column:span 2;"><div style="color:#22c55e;font-weight:700;">200 OK</div><div style="color:#64748b;font-size:13px;">РЈСЃРїРµС€РЅС‹Р№ Р·Р°РїСЂРѕСЃ (РґР°Р¶Рµ РµСЃР»Рё РґР°РЅРЅС‹Рµ РЅРµ РЅР°Р№РґРµРЅС‹)</div></div>
+        <div class="endpoint"><div style="color:#ef4444;font-weight:700;">401 Не авторизован</div><div style="color:#64748b;font-size:13px;">Неверный или отсутствующий API-ключ</div></div>
+        <div class="endpoint"><div style="color:#f59e0b;font-weight:700;">400 Неверный запрос</div><div style="color:#64748b;font-size:13px;">Отсутствует параметр запроса</div></div>
+        <div class="endpoint" style="grid-column:span 2;"><div style="color:#22c55e;font-weight:700;">200 OK</div><div style="color:#64748b;font-size:13px;">Успешный запрос (даже если данные не найдены)</div></div>
     </div>
 
-    <div class="footer"><span>Easy API Gateway</span> В· <span>@y3Huk_iphone</span></div>
+    <div class="footer"><span>Easy API Gateway</span> · <span>@y3Huk_iphone</span></div>
 </div>
 </body>
 </html>
