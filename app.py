@@ -30,14 +30,18 @@ INFINITY_KEY = "N7xQ4Lp2ZWk8F5VcD1mR9H6TyU3E0BJa"
 SEON_KEY = "758f5f54-befb-4125-bd17-931689af6633"
 VK_TOKEN = "0af157510af157510af15751aa0a89e69600af10af157516a0bc15996e74fe2b440998c"
 SHODAN_KEY = "xx6gSg9pWYmJcND1hEMbcWuOJtjbHSZ5"
-DEPSEARCH_KEY = "WDTHx2vqZGE38gchBe7oAewzB9ZPNpxU"
+
+DEPSEARCH_TOKENS = [
+    "WDTHx2vqZGE38gchBe7oAewzB9ZPNpxU",
+    "TEST"
+]
 
 SNUSBASE_URL = "https://api.snusbase.com/data/search"
 OFDATA_BASE = "https://api.ofdata.ru/v2"
 INFINITY_URL = "https://infinity-search.fun/find.php"
 SEON_URL = "https://api.seon.io/SeonRestService/phone-api/v2"
 SHODAN_BASE_URL = "https://api.shodan.io"
-DEPSEARCH_URL = "https://api.depsearch.sbs/quest"
+DEPSEARCH_URL = "https://api.depsearch.sbs"
 
 ALLOWED_KEYS = {}
 banned_ips = {}
@@ -182,20 +186,19 @@ def detect_type(query):
         return "company"
     return "text"
 
-def depsearch_search(query, search_type):
-    try:
-        q = str(query).strip()
-        params = {
-            "quest": q,
-            "token": DEPSEARCH_KEY,
-            "lang": "ru"
-        }
-        r = requests.get(DEPSEARCH_URL, params=params, timeout=15)
-        if r.status_code == 200:
-            return {"source": "DepSearch", "data": r.json()}
-        return {"source": "DepSearch", "error": r.status_code}
-    except:
-        return {"source": "DepSearch", "error": 504}
+async def query_depsearch(query: str):
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        for token in DEPSEARCH_TOKENS:
+            try:
+                url = f"{DEPSEARCH_URL}/quest={query}&token={token}&lang=ru"
+                resp = await client.get(url)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if "error" not in data or "Превышен лимит" not in data.get("error", ""):
+                        return {"source": "DepSearch", "data": data}
+            except Exception:
+                continue
+    return {"source": "DepSearch", "error": "DepSearch unavailable"}
 
 def snusbase(query, search_type):
     try:
@@ -426,7 +429,8 @@ async def search(request: Request):
         with ThreadPoolExecutor(max_workers=2) as executor:
             futures = {}
             
-            futures[executor.submit(depsearch_search, query, search_type)] = "dep"
+            depsearch_future = executor.submit(asyncio.run, query_depsearch(query))
+            futures[depsearch_future] = "dep"
             
             if search_type in ["email", "pass"]:
                 futures[executor.submit(snusbase, query, search_type)] = "sn"
